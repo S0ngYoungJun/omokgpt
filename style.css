@@ -1,0 +1,40 @@
+#board {
+  display: grid;
+  grid-template-columns: repeat(19, 40px);
+  grid-template-rows: repeat(19, 40px);
+  border: 2px solid #000;
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0; /* 글자 숨기기 */
+}
+
+.black-stone {
+  width: 30px;
+  height: 30px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.white-stone {
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 50%;
+}
+
+#result {
+  font-size: 18px;
+}
+
+#restart {
+  margin-top: 10px;
+  font-size: 18px;
+}
