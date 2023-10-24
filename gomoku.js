@@ -4,7 +4,7 @@ const resetButton = document.getElementById("reset-button");
 const currentPlayerSpan = document.getElementById("current-player");
 const winnerSpan = document.getElementById("winner");
 
-const boardSize = 15;
+const boardSize = 19;
 const cellSize = canvas.width / boardSize;
 let board = new Array(boardSize).fill(null).map(() => new Array(boardSize).fill(null));
 let currentPlayer = "흑돌";
@@ -12,57 +12,67 @@ let winner = null;
 
 function drawBoard() {
     // 바둑판 그리기
+    context.fillStyle = "#f0d993"; // 바둑판의 선 색상
     for (let i = 0; i < boardSize; i++) {
-        for (let j = 0; j < boardSize; j++) {
-            context.beginPath();
-            context.arc(i * cellSize, j * cellSize, 20, 0, 2 * Math.PI);
-            context.stroke();
-        }
+        context.fillRect(0, i * cellSize, canvas.width, 1);
+        context.fillRect(i * cellSize, 0, 1, canvas.height);
     }
 }
 
 function drawStone(x, y, color) {
     // 돌 그리기
     context.beginPath();
-    context.arc(x * cellSize, y * cellSize, 20, 0, 2 * Math.PI);
+    context.arc(x * cellSize, y * cellSize, 18, 0, 2 * Math.PI);
     context.fillStyle = color;
     context.fill();
 }
 
 function checkForWinner(x, y) {
-    const directions = [
-        [1, 0], [0, 1], [1, 1], [1, -1]
-    ];
+  const directions = [
+      [1, 0], [0, 1], [1, 1], [1, -1]
+  ];
 
-    for (const [dx, dy] of directions) {
-        let count = 1;
-        count += countInDirection(x, y, dx, dy);
-        count += countInDirection(x, y, -dx, -dy);
+  for (const [dx, dy] of directions) {
+      let count = 1;
+      count += countInDirection(x, y, dx, dy);
+     
 
-        if (count >= 5) {
-            return currentPlayer;
-        }
-    }
+      if (count >= 5) {
+          return currentPlayer;
+      }
+  }
 
-    return null;
+  return null;
 }
 
 function countInDirection(x, y, dx, dy) {
-    let count = 0;
-    const color = board[y][x];
+  const color = board[y][x];
+  let count = 0;
+  let newX, newY;
 
-    for (let i = 1; i < 5; i++) {
-        const newX = x + i * dx;
-        const newY = y + i * dy;
+  for (let i = 1; i < 5; i++) {
+      newX = x + i * dx;
+      newY = y + i * dy;
 
-        if (newX >= 0 && newX < boardSize && newY >= 0 && newY < boardSize && board[newY][newX] === color) {
-            count++;
-        } else {
-            break;
-        }
-    }
+      if (newX >= 0 && newX < boardSize && newY >= 0 && newY < boardSize && board[newY][newX] === color) {
+          count++;
+      } else {
+          break;
+      }
+  }
 
-    return count;
+  for (let i = 1; i < 5; i++) {
+      newX = x - i * dx;
+      newY = y - i * dy;
+
+      if (newX >= 0 && newX < boardSize && newY >= 0 && newY < boardSize && board[newY][newX] === color) {
+          count++;
+      } else {
+          break;
+      }
+  }
+
+  return count;
 }
 
 function handleClick(event) {
@@ -73,7 +83,8 @@ function handleClick(event) {
 
     if (board[y][x] === null) {
         board[y][x] = currentPlayer;
-        drawStone(x, y, currentPlayer);
+        const stoneColor = currentPlayer === "흑돌" ? "#000000" : "#ffffff"; // 흑돌과 백돌의 색상 설정
+        drawStone(x, y, stoneColor);
 
         winner = checkForWinner(x, y);
         if (winner) {
@@ -90,7 +101,9 @@ function resetGame() {
     winner = null;
     currentPlayer = "흑돌";
     winnerSpan.textContent = "없음";
+    context.clearRect(0, 0, canvas.width, canvas.height);
     drawBoard();
+    
 }
 
 canvas.addEventListener("click", handleClick);
